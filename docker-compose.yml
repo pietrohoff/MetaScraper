@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  php:
+    image: php:8.1-apache
+    container_name: MetaScraper
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html/src      # Mapeia a pasta src para o diretório de aplicação no container
+      - ./downloads:/var/www/html/downloads  # Diretório para armazenar arquivos baixados
+      - ./logs:/var/www/html/logs    # Diretório para armazenar logs
+      - ./index.php:/var/www/html/index.php  # Arquivo index.php
+      - ./config.php:/var/www/html/config.php # Arquivo de configuração
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html   # Define o diretório raiz do Apache
+
+    # Instalar dependências adicionais se necessário
+    command: >
+      /bin/bash -c "apt-get update &&
+      apt-get install -y libapache2-mod-php &&
+      docker-php-ext-install exif"
+

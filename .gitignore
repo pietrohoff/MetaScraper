@@ -1,0 +1,6 @@
+# Ignorar a pasta downloads
+downloads/
+
+# Outras pastas ou arquivos que você queira ignorar
+logs/
+vendor/

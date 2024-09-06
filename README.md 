@@ -1,0 +1,15 @@
+# MetaScraper
+
+MetaScraper é uma ferramenta PHP para baixar imagens e arquivos de um site, extrair seus metadados e exibir as informações obtidas.
+
+## Requisitos
+
+- PHP 7.4 ou superior
+- cURL habilitado
+
+## Como usar
+
+1. Clone o repositório.
+2. Edite o arquivo `config.php` para definir o diretório de downloads e logs.
+3. Execute `src/Main.php` para começar a baixar e analisar os arquivos.
+
