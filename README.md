@@ -6,7 +6,9 @@
 ██ ████ ██ █████      ██    ███████ ███████ ██      ██████  ███████ ██████  █████   ██████  
 ██  ██  ██ ██         ██    ██   ██      ██ ██      ██   ██ ██   ██ ██      ██      ██   ██ 
 ██      ██ ███████    ██    ██   ██ ███████  ██████ ██   ██ ██   ██ ██      ███████ ██   ██ 
-                                                                                                                                 ```                                               
+
+
+```                                               
 
 MetaScraper é uma ferramenta em PHP para baixar imagens e arquivos de um site, analisar seus metadados e retornar informações relevantes.
 
