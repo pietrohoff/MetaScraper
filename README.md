@@ -32,7 +32,7 @@ MetaScraper é uma ferramenta em PHP para baixar imagens e arquivos de um site, 
 1. Clone o repositório para o seu ambiente local:
 
    ```bash
-   git clone https://github.com/seuusuario/MetaScraper.git
+   git clone https://github.com/pietrohoff/MetaScraper.git
    cd MetaScraper
    ```
 
