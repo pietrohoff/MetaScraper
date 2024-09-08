@@ -1,57 +1,54 @@
 <?php
-// src/Main.php
-require_once 'Download.php';
 require_once 'Extractor.php';
-require_once 'MetaDataAnalyzer.php';
 
 class Main {
+    private static $visitedLinks = [];  // Links já visitados
+    private static $foundLinks = [];    // Links encontrados (subdomínios e pastas)
+
     public static function execute($url) {
-        $saveDirectory = __DIR__ . '/../downloads/';
+        // Verifica se o link já foi visitado
+        if (in_array($url, self::$visitedLinks)) {
+            return;
+        }
+
+        // Adiciona o link à lista de visitados
+        self::$visitedLinks[] = $url;
 
         // Baixa o conteúdo da URL fornecida
-        $content = Download::downloadContent($url);
-
+        $content = @file_get_contents($url);
         if (!$content) {
-            die("Não foi possível baixar o conteúdo da URL.\n");
+            echo "Não foi possível acessar o conteúdo da URL: $url\n";
+            return;
         }
 
-        // Extrai os links das imagens
-        $links = Extractor::extractLinks($content);
+        // Extrai links de páginas internas e subdomínios
+        $pageLinks = Extractor::extractPageLinks($content, $url);   // Usando extractPageLinks() para pastas
+        $subdomainLinks = Extractor::extractSubdomains($content, $url); // Usando extractSubdomains() para subdomínios
 
-        if (empty($links)) {
-            die("Nenhuma imagem encontrada no conteúdo da URL.\n");
+        // Armazena links únicos de subdomínios e pastas
+        foreach ($pageLinks as $link) {
+            if (!in_array($link, self::$foundLinks)) {
+                self::$foundLinks[] = $link;
+            }
         }
 
-        // Processa cada link de imagem
-        foreach ($links as $link) {
-            $fileName = basename($link);  // Extrai o nome do arquivo
-            $savePath = $saveDirectory . $fileName;
-
-            // Baixa o arquivo
-            echo "Baixando: $fileName\n";
-            Download::downloadFile($link, $savePath);
-
-            // Verifica se o arquivo baixado está vazio
-            if (filesize($savePath) === 0) {
-                echo "O arquivo $fileName está vazio. Excluindo...\n";
-                unlink($savePath);  // Deleta o arquivo vazio
-                continue;
+        foreach ($subdomainLinks as $subdomain) {
+            if (!in_array($subdomain, self::$foundLinks)) {
+                self::$foundLinks[] = $subdomain;
             }
+        }
 
-            // Analisa os metadados
-            $metaData = MetaDataAnalyzer::analyzeMetaData($savePath);
+        // Recursivamente explora as páginas
+        foreach ($pageLinks as $pageLink) {
+            self::execute($pageLink);
+        }
+    }
 
-            // Se o arquivo não tiver metadados relevantes, exclui o arquivo
-            if (empty($metaData) || $metaData === "Nenhum dado EXIF encontrado.") {
-                echo "O arquivo $fileName não possui metadados relevantes. Excluindo...\n";
-                unlink($savePath);  // Deleta o arquivo sem metadados
-                continue;
-            }
-
-            // Exibe os metadados apenas dos arquivos que têm algum dado
-            echo "Metadados do arquivo $fileName:\n";
-            print_r($metaData);
-            echo "\n";
+    // Mostra o resultado final de todos os links encontrados
+    public static function showResults() {
+        echo "Links encontrados (subdomínios e pastas):\n";
+        foreach (self::$foundLinks as $link) {
+            echo $link . "\n";
         }
     }
 }

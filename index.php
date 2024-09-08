@@ -23,27 +23,55 @@ if (!$content) {
     die("Não foi possível baixar o conteúdo da URL.\n");
 }
 
-// Extrai os links das imagens
-$links = Extractor::extractLinks($content);
+// Extrai os links de subdomínios e páginas internas
+$pageLinks = Extractor::extractPageLinks($content, $url);   // Usando extractPageLinks para páginas internas
+$subdomainLinks = Extractor::extractSubdomains($content, $url); // Usando extractSubdomains para subdomínios
 
-if (empty($links)) {
-    die("Nenhuma imagem encontrada no conteúdo da URL.\n");
+// Exibe os links de páginas internas
+echo "Páginas internas encontradas:\n";
+foreach ($pageLinks as $link) {
+    echo $link . "\n";
 }
 
-// Processa cada link de imagem
-foreach ($links as $link) {
-    $fileName = basename($link);  // Extrai o nome do arquivo
-    $savePath = $saveDirectory . $fileName;
+// Exibe os subdomínios
+echo "\nSubdomínios encontrados:\n";
+foreach ($subdomainLinks as $subdomain) {
+    echo $subdomain . "\n";
+}
 
-    // Baixa o arquivo
-    echo "Baixando: $fileName\n";
-    Download::downloadFile($link, $savePath);
+// Função para baixar todas as imagens de uma página e analisar metadados
+function downloadAndAnalyzeImagesFromPage($pageUrl, $saveDirectory) {
+    // Baixar o conteúdo da página
+    $content = Download::downloadContent($pageUrl);
 
-    // Analisa os metadados
-    echo "Analisando metadados de $fileName...\n";
-    $metaData = MetaDataAnalyzer::analyzeMetaData($savePath);
+    if (!$content) {
+        echo "Não foi possível baixar o conteúdo da página: $pageUrl\n";
+        return;
+    }
 
-    // Exibe os metadados
-    print_r($metaData);
-    echo "\n";
+    // Extrair as URLs das imagens da página
+    $imageLinks = Extractor::extractImageLinks($content, $pageUrl);
+
+    // Baixar cada imagem encontrada e analisar metadados
+    foreach ($imageLinks as $imageLink) {
+        $imageName = basename($imageLink);  // Extrai o nome do arquivo de imagem
+        $savePath = $saveDirectory . $imageName;
+
+        // Baixa o arquivo da imagem
+        echo "Baixando imagem: $imageName de $pageUrl\n";
+        Download::downloadFile($imageLink, $savePath);
+
+        // Analisa os metadados
+        echo "Analisando metadados de $imageName...\n";
+        $metaData = MetaDataAnalyzer::analyzeMetaData($savePath);
+
+        // Exibe os metadados
+        print_r($metaData);
+        echo "\n";
+    }
+}
+
+// Baixar e analisar todas as imagens de cada página interna
+foreach ($pageLinks as $pageLink) {
+    downloadAndAnalyzeImagesFromPage($pageLink, $saveDirectory);
 }

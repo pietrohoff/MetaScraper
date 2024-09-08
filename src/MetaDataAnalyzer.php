@@ -2,30 +2,21 @@
 // src/MetaDataAnalyzer.php
 
 class MetaDataAnalyzer {
+    // Função para analisar os metadados de uma imagem
     public static function analyzeMetaData($filePath) {
-        // Verifica se o arquivo existe e tem conteúdo
-        if (!file_exists($filePath) || filesize($filePath) === 0) {
-            return "O arquivo não foi baixado corretamente ou está vazio." . "\n";
+        // Verifica se o arquivo existe
+        if (!file_exists($filePath)) {
+            return null;
         }
 
-        // Verifica o tipo de arquivo
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $fileType = mime_content_type($filePath);
+        // Tenta extrair dados EXIF da imagem
+        $metaData = @exif_read_data($filePath, 0, true);
 
-        if (!in_array($fileType, $allowedTypes)) {
-            return "O arquivo não é uma imagem suportada. Tipo detectado: " . $fileType . "\n";
+        if (!$metaData) {
+            return "Nenhum dado EXIF encontrado.";
         }
 
-        // Tenta ler os metadados EXIF
-        if (exif_imagetype($filePath)) {
-            $exif = @exif_read_data($filePath);  // @ para suprimir warnings de arquivos sem EXIF
-            if ($exif) {
-                return $exif;
-            } else {
-                return "Nenhum dado EXIF encontrado." . "\n";
-            }
-        } else {
-            return "O arquivo não é uma imagem suportada.". "\n";
-        }
+        // Retorna os metadados extraídos
+        return $metaData;
     }
 }
