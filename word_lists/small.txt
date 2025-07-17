@@ -1,0 +1,10 @@
+pdf
+docx
+xlsx
+pptx
+jpg
+png
+tiff
+mp4
+mp3
+zip

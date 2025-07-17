@@ -1,6 +1,20 @@
-# Ignorar a pasta downloads
-downloads/
+# Ignorar arquivos e pastas gerados automaticamente
+files_recon/
+meta_recon/
 
-# Outras pastas ou arquivos que você queira ignorar
-logs/
-vendor/
+# Ignorar arquivos temporários ou de backup
+*.swp
+*.bak
+*.tmp
+
+# Ignorar arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos Python compilados
+__pycache__/
+*.py[cod]
+
+# Ignorar ambiente virtual, se houver
+venv/
+.env/

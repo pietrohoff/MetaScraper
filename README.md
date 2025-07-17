@@ -1,142 +1,130 @@
-
 ```bash
-
 ███    ███ ███████ ████████  █████  ███████  ██████ ██████   █████  ██████  ███████ ██████  
 ████  ████ ██         ██    ██   ██ ██      ██      ██   ██ ██   ██ ██   ██ ██      ██   ██ 
 ██ ████ ██ █████      ██    ███████ ███████ ██      ██████  ███████ ██████  █████   ██████  
 ██  ██  ██ ██         ██    ██   ██      ██ ██      ██   ██ ██   ██ ██      ██      ██   ██ 
 ██      ██ ███████    ██    ██   ██ ███████  ██████ ██   ██ ██   ██ ██      ███████ ██   ██ 
+```
 
+# MetaScraper
 
-```                                               
+**MetaScraper** é uma ferramenta em Python para busca, download e análise de arquivos públicos encontrados em sites. Ele usa `lynx` e `wget` para encontrar arquivos de tipos específicos (como PDF, DOCX, JPG etc.) e `exiftool` para extrair seus metadados.
 
-MetaScraper é uma ferramenta em PHP para baixar imagens e arquivos de um site, analisar seus metadados e retornar informações relevantes.
+---
 
-## Funcionalidades
+## ⚙️ Funcionalidades
 
-- Baixa imagens de uma URL fornecida.
-- Analisa metadados de imagens, como dados EXIF.
-- Exclui automaticamente arquivos que não contêm dados ou que não foram baixados corretamente.
-- Mostra no terminal apenas os arquivos que contêm metadados relevantes.
+- Busca arquivos públicos usando Google Search (`site:<domínio> filetype:<tipo>`).
+- Faz download de todos os arquivos encontrados com `wget`.
+- Executa `exiftool` para extrair metadados dos arquivos.
+- Salva os arquivos baixados em `files_recon/` e os metadados em `meta_recon/`.
+- Ignora arquivos já ignorados pelo `.gitignore`.
 
-## Requisitos
+---
 
-- **PHP 7.4** ou superior
-- **cURL** habilitado no PHP
-- Servidor **Apache** (se usar o Docker, o ambiente já está configurado)
-  
-## Instalação
+## 🧰 Requisitos
+
+- Python 3.6+
+- [`lynx`](https://lynx.browser.org/)
+- [`wget`](https://www.gnu.org/software/wget/)
+- [`exiftool`](https://exiftool.org/)
+- Linux (recomendado)
+
+Você pode instalar as dependências com:
+
+```bash
+sudo apt update
+sudo apt install lynx wget libimage-exiftool-perl -y
+```
+
+---
+
+## 🚀 Instalação
 
 ### Clonando o Repositório
 
-1. Clone o repositório para o seu ambiente local:
+```bash
+git clone https://github.com/pietrohoff/MetaScraper.git
+cd MetaScraper
+```
 
-   ```bash
-   git clone https://github.com/pietrohoff/MetaScraper.git
-   cd MetaScraper
-   ```
+---
 
-2. Crie o diretório de `downloads` (caso ele ainda não exista):
+## ▶️ Executando
 
-   ```bash
-   mkdir downloads
-   ```
+```bash
+python3 main.py <domínio> <tipo>
+```
 
-3. (Opcional) Instale dependências adicionais com o Composer (caso aplicável):
+### Exemplos:
 
-   ```bash
-   composer install
-   ```
+```bash
+python3 main.py interquimica.com.br pdf
+python3 main.py exemplo.com jpg
+```
 
-### Usando Docker (Recomendado)
+- Tipos disponíveis:
+  - `a`: all.txt
+  - `m`: medium.txt
+  - `s`: small.txt
+  - Ou diretamente `pdf`, `jpg`, `docx` etc.
 
-Se você preferir rodar o projeto em um ambiente Docker, siga as instruções abaixo.
+Os arquivos serão salvos em:
+- `files_recon/` → arquivos baixados
+- `meta_recon/` → metadados extraídos com `exiftool`
 
-1. **Configuração do Docker**:
-   O projeto inclui um arquivo `docker-compose.yml` configurado com PHP 8.1 e Apache. Para iniciar o ambiente:
+---
 
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Acessar o Terminal**:
-   Para acessar o terminal do container e rodar o projeto:
-
-   ```bash
-   docker exec -it MetaScraper bash
-   ```
-
-3. **Rodar o Projeto**:
-   No terminal do container ou em seu ambiente local, execute o seguinte comando:
-
-   ```bash
-   php index.php
-   ```
-
-   O script solicitará uma URL para análise.
-
-## Executando o Projeto
-
-1. No terminal, execute o comando:
-
-   ```bash
-   php index.php
-   ```
-
-2. O sistema solicitará que você insira a URL do site para fazer o download das imagens e arquivos. Digite a URL e pressione Enter.
-
-3. O script irá:
-   - Baixar as imagens encontradas na URL fornecida.
-   - Exibir os metadados relevantes no terminal.
-   - Excluir automaticamente os arquivos que estejam vazios ou sem metadados.
-
-## Estrutura do Projeto
+## 📁 Estrutura do Projeto
 
 ```
 /MetaScraper
-│
-├── /src
-│   ├── Download.php           # Gerencia o download de conteúdo
-│   ├── Extractor.php          # Extrai links de imagens e arquivos
-│   ├── MetaDataAnalyzer.php   # Analisa os metadados das imagens
-│   ├── Main.php               # Controla o fluxo principal do script
-│
-├── /downloads                 # Diretório onde os arquivos baixados são salvos (ignorado pelo Git)
-│
-├── /logs                      # Diretório para armazenar logs (ignorado pelo Git)
-│
-├── /vendor                    # Dependências de terceiros (ignorado pelo Git)
-│
-├── docker-compose.yml          # Configuração do ambiente Docker
-├── .gitignore                 # Arquivo de configuração para ignorar pastas no Git
-├── config.php                 # Configurações gerais do projeto
-├── index.php                  # Ponto de entrada do script
-└── README.md                  # Documentação do projeto
+├── main.py                  # Script principal
+├── lynx_installer.py        # Verifica e instala o lynx
+├── exiftool_installer.py    # Verifica e instala o exiftool
+├── word_lists/
+│   ├── all.txt
+│   ├── medium.txt
+│   └── small.txt
+├── files_recon/             # Arquivos baixados (ignorado pelo Git)
+├── meta_recon/              # Metadados extraídos (ignorado pelo Git)
+└── .gitignore               # Define o que não será versionado
 ```
 
-## Contribuição
+---
 
-1. Faça um fork do projeto.
-2. Crie uma branch com suas alterações:
+## 🧼 Limpando os diretórios (opcional)
 
+Para apagar os resultados:
+
+```bash
+rm -rf files_recon/*
+rm -rf meta_recon/*
+```
+
+Evite rodar o script como `sudo`, pois os arquivos ficarão com permissões de root.
+
+---
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch:
    ```bash
    git checkout -b minha-feature
    ```
-
-3. Commit suas mudanças:
-
+3. Commit:
    ```bash
-   git commit -m "Adiciona nova funcionalidade"
+   git commit -m "Adiciona nova feature"
    ```
-
-4. Envie para o repositório original:
-
+4. Push:
    ```bash
    git push origin minha-feature
    ```
+5. Abra um Pull Request
 
-5. Abra um Pull Request para revisão.
+---
 
-## Licença
+## 📄 Licença
 
 Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais informações.
