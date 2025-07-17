@@ -6,7 +6,6 @@
 ██      ██ ███████    ██    ██   ██ ███████  ██████ ██   ██ ██   ██ ██      ███████ ██   ██ 
 ```
 
-# MetaScraper
 
 **MetaScraper** é uma ferramenta em Python para busca, download e análise de arquivos públicos encontrados em sites. Ele usa `lynx` e `wget` para encontrar arquivos de tipos específicos (como PDF, DOCX, JPG etc.) e `exiftool` para extrair seus metadados.
 
@@ -18,7 +17,6 @@
 - Faz download de todos os arquivos encontrados com `wget`.
 - Executa `exiftool` para extrair metadados dos arquivos.
 - Salva os arquivos baixados em `files_recon/` e os metadados em `meta_recon/`.
-- Ignora arquivos já ignorados pelo `.gitignore`.
 
 ---
 
